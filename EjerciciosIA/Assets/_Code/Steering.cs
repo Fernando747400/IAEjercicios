@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Steering : MonoBehaviour
@@ -11,12 +12,14 @@ public class Steering : MonoBehaviour
         SEEK,
         FLEE,
         ARRIVE,
-        FLEEEASED
+        LEAVE,
+        WANDER
     }
 
     [Header("Dependencies")]
     [SerializeField] private GameObject _object;
     [SerializeField] private GameObject _target;
+    [SerializeField] private GameObject _WanderObject; 
 
     [Header("Settings")]
     [SerializeField] private float _speed;
@@ -25,12 +28,14 @@ public class Steering : MonoBehaviour
     [SerializeField] private float _fleeDistance;
    
     [SerializeField] private MovingState _movingState;
+    [SerializeField] private Vector3 _moveDirection;
 
     private void Start()
     {
         if (_object == null) _object = this.gameObject;
         if (_mass == 0) Debug.LogWarning("The GameObject " + this.gameObject.name + " has a mass of 0");
         if(_mass <0) Debug.LogWarning("The GameObject " + this.gameObject.name + " has negative mass. It might fly away");
+        _moveDirection = Vector3.zero;
     }
 
     private void FixedUpdate()
@@ -43,20 +48,26 @@ public class Steering : MonoBehaviour
         switch (_movingState)
         {
             case MovingState.SEEK:
-                _object.transform.position += SeekObject(_object, _target, _speed, _mass);
+                _moveDirection += SeekObject(_object, _target, _speed, _mass);
                 break;
 
             case MovingState.FLEE:
-                _object.transform.position += FleeObject(_object, _target, _speed, _mass);
+                _moveDirection += FleeObject(_object, _target, _speed, _mass);
                 break;
 
             case MovingState.ARRIVE:
-                _object.transform.position += Arrival(_object, _target, _speed, _mass, _arrivalDistance);
+                _moveDirection += Arrival(_object, _target, _speed, _mass, _arrivalDistance);
                 break;
-            case MovingState.FLEEEASED:
-                _object.transform.position += FleeEased(_object, _target, _speed, _mass, _fleeDistance);
+            case MovingState.LEAVE:
+                _moveDirection += Leaving(_object, _target, _speed, _mass, _fleeDistance);
+                break;
+
+            case MovingState.WANDER:
+                _moveDirection += Leaving(_object, _target, _speed, _mass, _fleeDistance);
+                Wander(_object, _moveDirection, 3f);
                 break;
         }
+        _object.transform.position = _moveDirection;
     }
 
     #region steering behaivors
@@ -91,15 +102,26 @@ public class Steering : MonoBehaviour
         return currentV * Time.deltaTime;
     }
 
-    public Vector3 FleeEased(GameObject fleer, GameObject target, float speed, float mass, float fleeDistance)
+    public Vector3 Leaving(GameObject leaver, GameObject target, float speed, float mass, float fleeDistance)
     {
-        Vector3 distance = fleer.transform.position - target.transform.position;
+        Vector3 distance = leaver.transform.position - target.transform.position;
         float fleeS = (speed * (fleeDistance / distance.magnitude)) - speed;
         Vector3 desiredV = distance.normalized * (Mathf.Max(Mathf.Min(fleeS, speed), 0) / mass);
         Vector3 currentV = Vector3.zero;
         Vector3 steering = desiredV - currentV;
         currentV += steering;
         return currentV * Time.deltaTime;
+    }
+
+    public void Wander(GameObject wanderer, Vector3 moveDirection, float wanderRadius)
+    {
+        Vector3 CircleCenter = wanderer.transform.position;
+        CircleCenter.Normalize();
+        moveDirection.Normalize();
+        CircleCenter = CircleCenter + moveDirection;
+        CircleCenter.Normalize();
+        CircleCenter = CircleCenter * wanderRadius;
+        _WanderObject.transform.position = CircleCenter;
     }
 
     #endregion

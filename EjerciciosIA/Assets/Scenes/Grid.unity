@@ -237,8 +237,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tile: {fileID: 5753319876334254847, guid: e553fdaa5e4818a43a4d0579ab2fd544, type: 3}
-  _xSize: 5
-  _ySize: 5
+  _xSize: 25
+  _ySize: 25
+  _xOffset: 0.1
+  _yOffset: 0.1
+  _withOffset: 0
 --- !u!4 &1623250152
 Transform:
   m_ObjectHideFlags: 0

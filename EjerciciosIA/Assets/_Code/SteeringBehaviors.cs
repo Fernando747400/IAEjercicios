@@ -23,7 +23,7 @@ namespace F747
         [SerializeField] private float _mass;
         [SerializeField] private float _steerForce;
 
-        [Header("Arrive Settings")]
+        [Header("Arrive/Follow Settings")]
         [SerializeField] private float _arrivalDistance;
 
         [Header("Leave Settings")]
@@ -158,16 +158,16 @@ namespace F747
             return steering;
         }
 
-        public Vector3 Follow(GameObject follower, GameObject target, Vector3 currentVelocity, Vector3 targetVelocity, float speed, float steerForce, float mass, float followDistance)
+        public Vector3 Follow(GameObject follower, GameObject target, Vector3 currentVelocity, Vector3 targetVelocity, float speed, float steerForce, float mass,float arrivalDistance, float followDistance)
         {
             if (targetVelocity == Vector3.zero)
             {
                 targetVelocity = target.transform.position - follower.transform.position;
             }
-
             Vector3 followPoint = target.transform.position + (-targetVelocity.normalized * followDistance);
+
             Vector3 distance = followPoint - follower.transform.position;
-            float arrivalS = speed * (distance.magnitude / 1f);
+            float arrivalS = speed * (distance.magnitude / arrivalDistance);
             Vector3 desiredV = distance.normalized * (Mathf.Min(arrivalS, speed) / mass);
             Vector3 steering = desiredV - currentVelocity;
             steering = ClampSteering(steering, steerForce);
@@ -225,7 +225,7 @@ namespace F747
                     break;
 
                 case MovingState.FOLLOW:
-                    _velocity += Follow(_steeredObject, _target, _velocity, _target.GetComponent<SteeringBehaviors>().Velocity, _speed, _steerForce, _mass, _followTime);
+                    _velocity += Follow(_steeredObject, _target, _velocity, _target.GetComponent<SteeringBehaviors>().Velocity, _speed, _steerForce, _mass,_arrivalDistance, _followTime);
                     break;
 
                 case MovingState.IDLE:
@@ -240,7 +240,7 @@ namespace F747
         private void Prepare()
         {
             if (_steeredObject == null) _steeredObject = this.gameObject; Debug.LogWarning("No steered object selected, set self as SteeredObject", this);
-            if (_target == null) Debug.LogError("No target selected", this);
+            if (_target == null) Debug.LogWarning("No target selected", this);
             if (_mass == 0) Debug.LogWarning("The object has a mass of 0", this);
             if (_mass < 0) Debug.LogWarning("The object has negative mass", this);
             _velocity = new Vector3(0.1f,0,0);

@@ -23,14 +23,6 @@ public class PlayerController : MonoBehaviour
         CheckDistance();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Enemy"))
-        {
-            collision.gameObject.GetComponent<EnemyController>().FollowState(this.gameObject);
-        }
-    }
-
     private void CheckDistance()
     {
         if (Vector3.Distance(this.transform.position, _target.transform.position) <= 0.06f)

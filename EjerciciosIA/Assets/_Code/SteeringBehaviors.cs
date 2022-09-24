@@ -1,6 +1,7 @@
 using Mono.Cecil.Cil;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
@@ -36,7 +37,8 @@ namespace F747
         [Header("Pursuit / Evade Settings")]
         [SerializeField] private float _pursuitTime;
 
-
+        [Header("Follow")]
+        [SerializeField] private float _followTime;
 
         private Vector3 _velocity;
         private float _wanderTimer = 0f;
@@ -51,6 +53,7 @@ namespace F747
             WANDER,
             PURSUIT,
             EVADE,
+            FOLLOW,
             IDLE
         }
         #endregion
@@ -66,6 +69,7 @@ namespace F747
         public float WanderRadius { get => _wanderRadius; set => _wanderRadius = value; }
         public float WanderTimer { get => _wanderTime; set => _wanderTime = value; }
         public float AheadTime { get => _pursuitTime; set => _pursuitTime = value; }
+        public float FollowTime { get => _followTime; set => _followTime = value; }
         public Vector3 Velocity{ get => _velocity; set => _velocity = value; }
         public MovingState State { get => _state; set => _state = value; }
         #endregion
@@ -86,11 +90,7 @@ namespace F747
             Vector3 distance = target.transform.position - seeker.transform.position;
             Vector3 desiredV = distance.normalized * (speed / mass);
             Vector3 steering = desiredV - currentVelocity;
-            if (steering.magnitude > steerForce)
-            {
-                steering.Normalize();
-                steering *= steerForce;
-            }
+            steering = ClampSteering(steering, steerForce);
             return steering;
         }
 
@@ -99,11 +99,7 @@ namespace F747
             Vector3 distance = fleer.transform.position - target.transform.position;
             Vector3 desiredV = distance.normalized * (speed / mass);
             Vector3 steering = desiredV - currentVelocity;
-            if (steering.magnitude > steerForce)
-            {
-                steering.Normalize();
-                steering *= steerForce;
-            }
+            steering = ClampSteering(steering, steerForce);
             return steering;
         }
 
@@ -113,11 +109,7 @@ namespace F747
             float arrivalS = speed * (distance.magnitude / arrivalDistance);
             Vector3 desiredV = distance.normalized * (Mathf.Min(arrivalS,speed) / mass);
             Vector3 steering = desiredV - currentVelocity;
-            if (steering.magnitude > steerForce)
-            {
-                steering.Normalize();
-                steering *= steerForce;
-            }
+            steering = ClampSteering(steering, steerForce);
             return steering;
         }
 
@@ -127,11 +119,7 @@ namespace F747
             float fleeS = (speed * (fleeDistance / distance.magnitude)) - speed;
             Vector3 desiredV = distance.normalized * (Mathf.Max(Mathf.Min(fleeS, speed),0) / mass);
             Vector3 steering = desiredV - currentVelocity;
-            if (steering.magnitude > steerForce)
-            {
-                steering.Normalize();
-                steering *= steerForce;
-            }
+            steering = ClampSteering(steering, steerForce);
             return steering;
         }
 
@@ -144,11 +132,7 @@ namespace F747
             Vector3 distance = target - wanderer.transform.position;
             Vector3 desiredV = distance.normalized * (speed / mass);
             Vector3 steering = desiredV - currentVelocity;
-            if (steering.magnitude > steerForce)
-            {
-                steering.Normalize();
-                steering *= steerForce;
-            }
+            steering = ClampSteering(steering, steerForce);
             return steering;
         }
 
@@ -159,11 +143,7 @@ namespace F747
             Vector3 distance = futureTargetPosition - pursuier.transform.position;
             Vector3 desiredV = distance.normalized * (speed / mass);
             Vector3 steering = desiredV - currentVelocity;
-            if (steering.magnitude > steerForce)
-            {
-                steering.Normalize();
-                steering *= steerForce;
-            }
+            steering = ClampSteering(steering, steerForce);
             return steering;
         }
 
@@ -174,6 +154,28 @@ namespace F747
             Vector3 distance = pursuier.transform.position - futureTargetPosition;
             Vector3 desiredV = distance.normalized * (speed / mass);
             Vector3 steering = desiredV - currentVelocity;
+            steering = ClampSteering(steering, steerForce);
+            return steering;
+        }
+
+        public Vector3 Follow(GameObject follower, GameObject target, Vector3 currentVelocity, Vector3 targetVelocity, float speed, float steerForce, float mass, float followDistance)
+        {
+            if (targetVelocity == Vector3.zero)
+            {
+                targetVelocity = target.transform.position - follower.transform.position;
+            }
+
+            Vector3 followPoint = target.transform.position + (-targetVelocity.normalized * followDistance);
+            Vector3 distance = followPoint - follower.transform.position;
+            float arrivalS = speed * (distance.magnitude / 1f);
+            Vector3 desiredV = distance.normalized * (Mathf.Min(arrivalS, speed) / mass);
+            Vector3 steering = desiredV - currentVelocity;
+            steering = ClampSteering(steering, steerForce);
+            return steering;
+        }
+
+        private Vector3 ClampSteering(Vector3 steering, float steerForce)
+        {
             if (steering.magnitude > steerForce)
             {
                 steering.Normalize();
@@ -222,9 +224,13 @@ namespace F747
                     _velocity += Evade(_steeredObject, _target, _velocity, _target.GetComponent<SteeringBehaviors>().Velocity, _speed, _steerForce, _mass, _pursuitTime);
                     break;
 
+                case MovingState.FOLLOW:
+                    _velocity += Follow(_steeredObject, _target, _velocity, _target.GetComponent<SteeringBehaviors>().Velocity, _speed, _steerForce, _mass, _followTime);
+                    break;
+
                 case MovingState.IDLE:
                     _velocity = Vector3.zero;
-                    Debug.Log("This GameObject is set to Idle " + this.name);
+                    //Debug.Log("This GameObject is set to Idle " + this.name);
                     break;
             }
 

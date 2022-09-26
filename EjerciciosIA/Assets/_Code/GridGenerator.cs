@@ -55,6 +55,6 @@ public class GridGenerator : MonoBehaviour
 
     private void Prepare()
     {
-        _grid = new GameObject[_xSize, _ySize];
+        _grid = new GameObject[_ySize, _xSize];
     }
 }

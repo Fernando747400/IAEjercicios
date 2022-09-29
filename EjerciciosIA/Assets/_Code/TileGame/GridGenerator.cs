@@ -21,6 +21,8 @@ public class GridGenerator : MonoBehaviour
     {
         Prepare();
         if (_withOffset) GenerateGrid(_xSize, _ySize, _xOffset, _yOffset); else GenerateGrid(_xSize, _ySize);
+        GridManager.Instance.SubscribeToSeedEvents();
+        GridManager.Instance.Grid = _grid;
     }
 
     public void GenerateGrid(int width, int height, float xGap, float yGap)
@@ -50,7 +52,7 @@ public class GridGenerator : MonoBehaviour
                 current.name = $"{i}-{j}";
                 _grid[i, j] = current;
             }
-        }
+        }        
     }
 
     private void Prepare()

@@ -55,7 +55,7 @@ public class Tile : MonoBehaviour
         ChangeColorByState();
     }
 
-    private void ChangeColorByState()
+    public void ChangeColorByState()
     {
         switch (State)
         {

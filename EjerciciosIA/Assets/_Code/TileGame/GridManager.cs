@@ -19,6 +19,14 @@ public class GridManager : MonoBehaviour
         Instance = this;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StartFlood();
+        }
+    }
+
     public void SubscribeToSeedEvents()
     {
         Tile[] tiles = FindObjectsOfType<Tile>();

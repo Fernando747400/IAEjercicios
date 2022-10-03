@@ -13,19 +13,18 @@ public class GridGenerator : MonoBehaviour
     [SerializeField] private int _ySize;
     [SerializeField] private float _xOffset;
     [SerializeField] private float _yOffset;
-    [SerializeField] private bool _withOffset;
 
     private GameObject[,] _grid;
 
     private void Start()
     {
         Prepare();
-        if (_withOffset) GenerateGrid(_xSize, _ySize, _xOffset, _yOffset); else GenerateGrid(_xSize, _ySize);
+        GenerateGrid(_xSize, _ySize, _xOffset, _yOffset);
         GridManager.Instance.SubscribeToSeedEvents();
         GridManager.Instance.Grid = _grid;
     }
 
-    public void GenerateGrid(int width, int height, float xGap, float yGap)
+    public void GenerateGrid(int width, int height, float xGap = 0, float yGap = 0)
     {      
         float currentYOff = 0;
         for (int i = 0; i < height; i++)
@@ -40,19 +39,6 @@ public class GridGenerator : MonoBehaviour
             }          
             currentYOff += yGap;
         }
-    }
-
-    public void GenerateGrid(int width, int height)
-    {
-        for (int i = 0; i < height; i++)
-        {
-            for (int j = 0; j < width; j++)
-            {
-                GameObject current = Instantiate(_tile, new Vector3(transform.position.x + j, transform.position.y + i, 0), Quaternion.identity);
-                current.name = $"{i}-{j}";
-                _grid[i, j] = current;
-            }
-        }        
     }
 
     private void Prepare()

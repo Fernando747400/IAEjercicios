@@ -16,6 +16,8 @@ public class GridGenerator : MonoBehaviour
 
     private GameObject[,] _grid;
 
+    public GameObject[,] Grid { get => _grid; }
+
     private void Start()
     {
         Prepare();

@@ -310,7 +310,6 @@ MonoBehaviour:
   _ySize: 10
   _xOffset: 0.1
   _yOffset: 0.1
-  _withOffset: 1
 --- !u!4 &1623250152
 Transform:
   m_ObjectHideFlags: 0
@@ -338,4 +337,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73625d1f01f3c9f47ac1a9937efa6eb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _floodDelay: 0.5
+  _floodDelay: 0.1
+  _recursiveMethod: 0

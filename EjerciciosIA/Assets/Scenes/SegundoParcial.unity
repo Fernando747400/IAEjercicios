@@ -169,6 +169,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stringToHandle: anitalavalatina
+  _indexToRemove: 2
+  _indexToAdd: 0
+  _charToAdd: 99
+  _multiplayBy: 0
 --- !u!114 &984266522
 MonoBehaviour:
   m_ObjectHideFlags: 0

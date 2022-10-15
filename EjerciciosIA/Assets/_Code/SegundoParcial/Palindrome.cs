@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Palindrome : MonoBehaviour
 {
     private string _word;
-    private int _size;
-    private int _count;
     private string _palindrome;
     private string _value;
 
@@ -14,6 +13,8 @@ public class Palindrome : MonoBehaviour
     private Stack<char> _reverse = new Stack<char>();
 
     public string Word { set { _word = value;  EvaluateString(_word); } }
+    public int Size { get { return _palindrome.Length; } }
+    public int Count { get { return GetCount(); } }
 
     #region Public Methods
     public void Show()
@@ -99,6 +100,12 @@ public class Palindrome : MonoBehaviour
         }
     }
 
+    private int GetCount()
+    {
+        if (_palindrome != "") return GetMostRepeatedCount(BuildDictionary(_palindrome, new Dictionary<char, int>()));
+        return GetMostRepeatedCount(BuildDictionary(_value, new Dictionary<char, int>()));
+    }
+
     private Queue<char> PoblateQueue(Queue<char> front, string text)
     {
         if (text.Length == 0) return front;
@@ -151,5 +158,25 @@ public class Palindrome : MonoBehaviour
         text += charStack.Pop();
         return BuildString(charStack, text);
     }
+
+    private Dictionary<char, int> BuildDictionary(string text, Dictionary<char, int> dictionary)
+    {
+        if (text.Length == 0) return dictionary;
+        if (dictionary.ContainsKey(text[0]))
+        {
+            dictionary[text[0]] += 1;
+            return BuildDictionary(text[1..], dictionary);
+        }
+        dictionary.Add(text[0], 1);
+        return BuildDictionary(text[1..], dictionary);
+    }
+
+    private int GetMostRepeatedCount(Dictionary<char, int> dictionary,int index = 0, int count = 0)
+    {
+        if (index >= dictionary.Count) return count;
+        if (dictionary.Values.ElementAt(index) > count) count = dictionary.Values.ElementAt(index);
+        return GetMostRepeatedCount(dictionary, index + 1, count);
+    }
+
     #endregion
 }

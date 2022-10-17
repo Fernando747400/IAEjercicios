@@ -6,7 +6,6 @@ public class MapManager : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private GameObject _prefab;
-
     private Vector2Int _size;
     private bool _isIso;
     private float _offset;

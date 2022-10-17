@@ -30,12 +30,13 @@ public class Map : MonoBehaviour
             float currentXOff = 0;
             for (int j = 0; j < _width; j++)
             {
-                GameObject current = Instantiate(tile, new Vector3(transform.position.x + j + currentXOff, transform.position.y + i + currentYOff, 0), Quaternion.identity);
-                current.name = $"{i}-{j}";
-                currentMap[i, j] = current;
+                GameObject block = Instantiate(tile);
+                block.transform.parent = transform;
+                block.name = $"{i}-{j}";
+                currentMap[j, i] = block;
                 currentXOff += _offset;
                 if (sprite == null) continue;
-                current.GetComponent<SpriteRenderer>().sprite = sprite;
+                block.GetComponent<SpriteRenderer>().sprite = sprite;
             }
             currentYOff += _offset;
         }
@@ -44,12 +45,16 @@ public class Map : MonoBehaviour
 
     public void AddComponents(GameObject component)
     {
-
+        if (component.GetComponent<Block>() == null) component.AddComponent<Block>();
+        
     }
 
     public void CreateIsoMap(GameObject prefab, SpriteRenderer renderer, int x, int y)
     {
-
+        _rotX = new Vector2(0.5f * (renderer.bounds.size.x + _offset), 0.25f * (renderer.bounds.size.y + _offset));
+        _rotY = new Vector2(-0.5f * (renderer.bounds.size.x + _offset), 0.25f * (renderer.bounds.size.y + _offset));
+        Vector2 rotate = (x * _rotX) + (y * _rotY);
+        prefab.transform.Rotate(rotate);
     }
 
     public void CenterMap()

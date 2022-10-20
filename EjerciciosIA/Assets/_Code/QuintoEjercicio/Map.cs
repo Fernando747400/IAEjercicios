@@ -10,18 +10,24 @@ public class Map : MonoBehaviour
     private int _width;
     private Vector2 _rotX;
     private Vector2 _rotY;
-    private float _offset;
+    private Vector2 _isoPoints;
+    private float _xOffset;
+    private float _yOffset;
+    private int _order;
     private bool _isIso;
     private Block _start;
     private Block _goal;
 
     public int Height { get => _height; set => _height = value; }
     public int Width { get => _width; set => _width = value; }
-    public float Offset { get => _offset; set => _offset = value; }
+    public float XOffset { get => _xOffset; set => _xOffset = value; }
+    public float YOffset { get => _yOffset; set => _yOffset = value; }
+    public Vector2 IsoPoints { get => _isoPoints; set => _isoPoints = value; }
     public bool IsIso { get => _isIso; set => _isIso = value; }
 
     public GameObject[,] CreateMap(GameObject tile, Sprite sprite = null, bool isIso = false)
     {
+        _order = _width * _height;
         GameObject[,] currentMap = new GameObject[_width,_height];
 
         float currentYOff = 0;
@@ -30,15 +36,24 @@ public class Map : MonoBehaviour
             float currentXOff = 0;
             for (int j = 0; j < _width; j++)
             {
-                GameObject block = Instantiate(tile);
-                block.transform.parent = transform;
-                block.name = $"{i}-{j}";
-                currentMap[j, i] = block;
-                currentXOff += _offset;
-                if (sprite == null) continue;
-                block.GetComponent<SpriteRenderer>().sprite = sprite;
+                GameObject tileBlock = Instantiate(tile, this.transform);
+                SpriteRenderer renderer = tileBlock.GetComponent<SpriteRenderer>();
+                tileBlock.name = $"{i}-{j}";
+
+                AddComponents(tileBlock);
+
+                Block block = tileBlock.GetComponent<Block>();
+                block.Coordinates = new Vector2Int(j,i);
+                block.ObstacleType = Block.BlockType.Free;
+
+                float size = block.transform.lossyScale.x;
+                block.transform.position = new Vector3((size + _xOffset) * (0.5f + j), (size * _yOffset) * (0.5f + i), 0);
+
+                if (_isIso) CreateIsoMap(tileBlock, renderer, j, i);
+                currentMap[j, i] = tileBlock;
+                currentXOff += _xOffset;
             }
-            currentYOff += _offset;
+            currentYOff += _yOffset;
         }
         return currentMap; //TODO ISO map creation
     }
@@ -51,14 +66,19 @@ public class Map : MonoBehaviour
 
     public void CreateIsoMap(GameObject prefab, SpriteRenderer renderer, int x, int y)
     {
-        _rotX = new Vector2(0.5f * (renderer.bounds.size.x + _offset), 0.25f * (renderer.bounds.size.y + _offset));
-        _rotY = new Vector2(-0.5f * (renderer.bounds.size.x + _offset), 0.25f * (renderer.bounds.size.y + _offset));
+        _rotX = new Vector2(0.5f * (renderer.bounds.size.x + _xOffset), 0.25f * (renderer.bounds.size.y + _yOffset));
+        _rotY = new Vector2(-0.5f * (renderer.bounds.size.x + _xOffset), 0.25f * (renderer.bounds.size.y + _yOffset));
         Vector2 rotate = (x * _rotX) + (y * _rotY);
-        prefab.transform.Rotate(rotate);
+        prefab.transform.position = rotate;
+        renderer.sortingOrder = _order;
+        _order--;
     }
 
     public void CenterMap()
     {
 
     }
+
+    //XOff 7.62   YOFF 9.95
+    //ISO XOFF -1.63  YOFF -0.30
 }

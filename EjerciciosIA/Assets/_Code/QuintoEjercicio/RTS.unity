@@ -275,7 +275,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33b0359bfa34e504a865ad6257ee8570, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _prefab: {fileID: 0}
+  _prefab: {fileID: 140838, guid: 1c39642664e5657428f180e73f72f6a1, type: 3}
+  _size: {x: 50, y: 50}
+  _isIso: 0
+  _xOffset: 7.62
+  _yOffset: 9.95
+  _selectBlock: {r: 0, g: 0, b: 0, a: 0}
+  _startColor: {r: 0, g: 0, b: 0, a: 0}
+  _endColor: {r: 0, g: 0, b: 0, a: 0}
+  _goalSelected: 0
+  _fields: {fileID: 0}
 --- !u!4 &1255312831
 Transform:
   m_ObjectHideFlags: 0

@@ -12,7 +12,8 @@ public class MapManager : MonoBehaviour
 
     [Header("Map settings")]
     [SerializeField] private bool _isIso;
-    [SerializeField] private float _offset;
+    [SerializeField] private float _xOffset;
+    [SerializeField] private float _yOffset;
 
     [Header("Interaction Colors")]
     [SerializeField] private Color _selectBlock;
@@ -34,7 +35,9 @@ public class MapManager : MonoBehaviour
         _map = GetComponent<Map>();
         _map.Height = _size.y;
         _map.Width = _size.x;
-        _map.Offset = _offset;
+        _map.XOffset = _xOffset;
+        _map.YOffset = _yOffset;
+        _map.IsIso = _isIso;
         _map.CreateMap(_prefab);
     }
 

@@ -4,13 +4,24 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    private int _x;
-    private int _y;
+    public BlockType ObstacleType;
+
+    private Vector2 _coordinates;
     private SpriteRenderer _renderer;
     private Color _color;
     private MapManager _manager;
-    private int _obstacle;
     private int _moveCost;
+
+    public enum BlockType
+    {
+        Free,
+        Obstacle,
+        Water,
+        Goal
+    }
+
+    public Vector2 Coordinates { get => _coordinates; set => _coordinates = value; }
+    
 
     #region UnityMethods
     private void Awake()

@@ -1,23 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
+using static Tile;
 
 public class Block : MonoBehaviour
 {
-    public BlockType ObstacleType;
+    public BlockState BlockStateType;
+    public event Action<GameObject> SeedEvent;
+    public event Action<GameObject> GoalEvent;
 
     private Vector2 _coordinates;
-    private SpriteRenderer _renderer;
-    private Color _color;
-    private MapManager _manager;
+    private SpriteRenderer _spriteRenderer;
     private int _moveCost;
 
-    public enum BlockType
+    private Color _initialColor;
+
+    public enum BlockState
     {
-        Free,
-        Obstacle,
-        Water,
-        Goal
+        FREE,
+        SEED,
+        GOAL,
+        OBSTACLE,
+        PATH
     }
 
     public Vector2 Coordinates { get => _coordinates; set => _coordinates = value; }
@@ -26,22 +32,69 @@ public class Block : MonoBehaviour
     #region UnityMethods
     private void Awake()
     {
-        
-    }
-
-    private void Update()
-    {
-        
+        Prepare();
     }
 
     public void OnMouseOver()
     {
-        
+        _spriteRenderer.color = MapManager.Instance.MouseOverColor;
+        if (Input.GetMouseButtonDown(0)) ChangeStateOnInput(KeyCode.Mouse0);
+        else if (Input.GetMouseButtonDown(1)) ChangeStateOnInput(KeyCode.Mouse1);
+        else if (Input.GetMouseButtonDown(2)) ChangeStateOnInput(KeyCode.Mouse2);
     }
 
     public void OnMouseExit()
     {
-        
+        ChangeColorByState();
+    }
+    #endregion
+
+    #region Private Methods
+    private void ChangeStateOnInput(KeyCode keyPressed)
+    {
+        switch (keyPressed)
+        {
+            case KeyCode.Mouse0:
+                BlockStateType = BlockState.SEED;
+                SeedEvent?.Invoke(this.gameObject);
+                break;
+            case KeyCode.Mouse1:
+                BlockStateType = BlockState.OBSTACLE;
+                break;
+            case KeyCode.Mouse2:
+                BlockStateType = BlockState.GOAL;
+                GoalEvent?.Invoke(this.gameObject);
+                break;
+        }
+        ChangeColorByState();
+    }
+
+    public void ChangeColorByState()
+    {
+        switch (BlockStateType)
+        {
+            case BlockState.FREE:
+                _spriteRenderer.color = _initialColor;
+                break;
+            case BlockState.SEED:
+                _spriteRenderer.color = MapManager.Instance.SeedColor;
+                break;
+            case BlockState.GOAL:
+                _spriteRenderer.color = MapManager.Instance.GoalColor;
+                break;
+            case BlockState.OBSTACLE:
+                _spriteRenderer.color = MapManager.Instance.ObstacleColor;
+                break;
+            case BlockState.PATH:
+                _spriteRenderer.color = MapManager.Instance.PathColor;
+                break;
+        }
+    }
+
+    private void Prepare()
+    {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _initialColor = _spriteRenderer.color;
     }
     #endregion
 }

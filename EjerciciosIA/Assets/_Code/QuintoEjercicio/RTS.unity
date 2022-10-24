@@ -176,7 +176,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 42
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -276,13 +276,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: 140838, guid: 1c39642664e5657428f180e73f72f6a1, type: 3}
-  _size: {x: 50, y: 50}
-  _isIso: 0
-  _xOffset: 7.62
-  _yOffset: 9.95
-  _selectBlock: {r: 0, g: 0, b: 0, a: 0}
-  _startColor: {r: 0, g: 0, b: 0, a: 0}
-  _endColor: {r: 0, g: 0, b: 0, a: 0}
+  _size: {x: 20, y: 10}
+  _isIso: 1
+  _isoPoints:
+  - {x: -4.39, y: 2.495}
+  - {x: -0.085, y: 4.98}
+  - {x: 4.23, y: 2.495}
+  - {x: -0.083, y: 0.008}
+  _xOffset: -1.63
+  _yOffset: -0.3
+  _mouseOverColor: {r: 0, g: 0.17614985, b: 1, a: 1}
+  _seedColor: {r: 0.5510948, g: 1, b: 0.25, a: 1}
+  _obstacleColor: {r: 0.23584908, g: 0.0077874744, b: 0.13210347, a: 1}
+  _pathColor: {r: 0.7263484, g: 0, b: 1, a: 1}
+  _goalColor: {r: 1, g: 0.47757208, b: 0, a: 1}
   _goalSelected: 0
   _fields: {fileID: 0}
 --- !u!4 &1255312831

@@ -5,7 +5,7 @@ using UnityEngine;
 public class FloodPath : MonoBehaviour
 {
     private Queue<Block> _frontier;
-    private Dictionary<Block, Block> _comeFrom;
+    private Dictionary<Block, Block> _cameFrom;
     private Map _map;
     private MapManager _manager;
 
@@ -26,7 +26,10 @@ public class FloodPath : MonoBehaviour
 
     private void GetNeighbours (Block home)
     {
+        int x = home.Coordinates.x;
+        int y = home.Coordinates.y;
 
+        if (CheckLimits(x + 1, y)) AddNext(home, x + 1, y);
     }
 
     private bool CheckLimits (int x, int y)

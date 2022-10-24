@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using System;
 using UnityEngine;
 
 public class Map : MonoBehaviour
@@ -17,6 +15,8 @@ public class Map : MonoBehaviour
     private bool _isIso;
     private Block _start;
     private Block _goal;
+
+    public event Action FinishedMapCreationEvent;
 
     public int Height { get => _height; set => _height = value; }
     public int Width { get => _width; set => _width = value; }
@@ -56,6 +56,7 @@ public class Map : MonoBehaviour
             currentYOff += _yOffset;
         }
         CenterMap();
+        FinishedMapCreationEvent?.Invoke();
         return _map; //TODO ISO map creation
     }
 

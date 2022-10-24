@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro.EditorUtilities;
 using UnityEngine;
-using static Tile;
 
 public class Block : MonoBehaviour
 {
@@ -11,7 +7,7 @@ public class Block : MonoBehaviour
     public event Action<GameObject> SeedEvent;
     public event Action<GameObject> GoalEvent;
 
-    private Vector2 _coordinates;
+    private Vector2Int _coordinates;
     private SpriteRenderer _spriteRenderer;
     private int _moveCost;
 
@@ -26,9 +22,8 @@ public class Block : MonoBehaviour
         PATH
     }
 
-    public Vector2 Coordinates { get => _coordinates; set => _coordinates = value; }
+    public Vector2Int Coordinates { get => _coordinates; set => _coordinates = value; }
     
-
     #region UnityMethods
     private void Awake()
     {

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MapManager : MonoBehaviour
@@ -8,6 +6,7 @@ public class MapManager : MonoBehaviour
 
     [Header("Dependencies")]
     [SerializeField] private GameObject _prefab;
+    [SerializeField] private FloodPath _floodPath; 
 
     [Header("Map Size")]
     [SerializeField]  private Vector2Int _size;

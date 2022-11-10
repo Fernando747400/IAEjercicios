@@ -3,15 +3,18 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    public BlockState BlockStateType;
     public event Action<GameObject> SeedEvent;
     public event Action<GameObject> GoalEvent;
+    
+    private BlockState _blockStateType;
 
     private Vector2Int _coordinates;
     private SpriteRenderer _spriteRenderer;
     private int _moveCost;
 
     private Color _initialColor;
+
+    public BlockState BlockStateType { get => _blockStateType; set { _blockStateType = value; ChangeColorByState(); } }
 
     public enum BlockState
     {
@@ -50,14 +53,14 @@ public class Block : MonoBehaviour
         switch (keyPressed)
         {
             case KeyCode.Mouse0:
-                BlockStateType = BlockState.SEED;
+                _blockStateType = BlockState.SEED;
                 SeedEvent?.Invoke(this.gameObject);
                 break;
             case KeyCode.Mouse1:
-                BlockStateType = BlockState.OBSTACLE;
+                _blockStateType = BlockState.OBSTACLE;
                 break;
             case KeyCode.Mouse2:
-                BlockStateType = BlockState.GOAL;
+                _blockStateType = BlockState.GOAL;
                 GoalEvent?.Invoke(this.gameObject);
                 break;
         }
@@ -66,7 +69,7 @@ public class Block : MonoBehaviour
 
     public void ChangeColorByState()
     {
-        switch (BlockStateType)
+        switch (_blockStateType)
         {
             case BlockState.FREE:
                 _spriteRenderer.color = _initialColor;

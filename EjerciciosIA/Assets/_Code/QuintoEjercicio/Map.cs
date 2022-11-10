@@ -18,12 +18,15 @@ public class Map : MonoBehaviour
 
     public event Action FinishedMapCreationEvent;
 
+    public GameObject[,] MapCurrent { get => _map;}
     public int Height { get => _height; set => _height = value; }
     public int Width { get => _width; set => _width = value; }
     public float XOffset { get => _xOffset; set => _xOffset = value; }
     public float YOffset { get => _yOffset; set => _yOffset = value; }
     public Vector2[] IsoPoints { get => _isoPoints; set => _isoPoints = value; }
     public bool IsIso { get => _isIso; set => _isIso = value; }
+    public Block Start { get => _start; set => _start = value; }
+    public Block Goal { get => _goal; set => _goal = value; }
 
     public GameObject[,] CreateMap(GameObject tile, Sprite sprite = null, bool isIso = false)
     {

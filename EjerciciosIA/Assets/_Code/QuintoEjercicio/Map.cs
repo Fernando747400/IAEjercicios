@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Map : MonoBehaviour
@@ -16,6 +17,9 @@ public class Map : MonoBehaviour
     private Block _start;
     private Block _goal;
 
+    private List<Block> _starsList = new List<Block>();
+    private List<Block> _goalsList = new List<Block>();
+
     public event Action FinishedMapCreationEvent;
 
     public GameObject[,] MapCurrent { get => _map;}
@@ -27,6 +31,9 @@ public class Map : MonoBehaviour
     public bool IsIso { get => _isIso; set => _isIso = value; }
     public Block Start { get => _start; set => _start = value; }
     public Block Goal { get => _goal; set => _goal = value; }
+
+    public List<Block> Seeds { get => _starsList;}
+    public List<Block> Goals { get => _goalsList;}
 
     public GameObject[,] CreateMap(GameObject tile, Sprite sprite = null, bool isIso = false)
     {
@@ -48,6 +55,9 @@ public class Map : MonoBehaviour
                 Block block = tileBlock.GetComponent<Block>();
                 block.Coordinates = new Vector2Int(j,i);
                 block.BlockStateType = Block.BlockState.FREE;
+                block.SeedEvent += AddSeed;
+                block.GoalEvent += AddGoal;
+                block.ClearEvent += RemoveFromList;
 
                 float size = block.transform.lossyScale.x;
                 block.transform.position = new Vector3((size + _xOffset) * (0.5f + j), (size * _yOffset) * (0.5f + i), 0);
@@ -94,6 +104,36 @@ public class Map : MonoBehaviour
         float offsetX = (_map[_width-1, 0].transform.position.x + _map[0,_height -1].transform.position.x) /2f;
         float offsetY = ((_map[_width - 1, _height - 1].transform.position.y)/2f + _map[_width-1, _height - 1].transform.lossyScale.x/4);
         transform.position += new Vector3(-offsetX, -offsetY,0);
+    }
+
+    private void AddSeed(GameObject seed)
+    {
+        Block seedBlock = seed.GetComponent<Block>();
+        if (seedBlock == null) throw new NullReferenceException("The component" + seed.name + " doesn't have Block scipt for Seed");
+        _starsList.Add(seedBlock);
+        _start = _starsList[0];
+    }
+
+    private void AddGoal(GameObject goal)
+    {
+        Block goalBlock = goal.GetComponent<Block>();
+        if (goalBlock == null) throw new NullReferenceException("The component" + goal.name + " doesn't have Block scipt fro BLock");
+        _goalsList.Add(goalBlock);
+        _goal = _goalsList[0];
+    }
+
+    private void RemoveFromList(GameObject Block)
+    {
+       Block item = Block.GetComponent<Block>();
+
+       if(_starsList.Contains(item)) _starsList.Remove(item);
+       if(_goalsList.Contains(item)) _goalsList.Remove(item);
+
+       if (_starsList.Count != 0) _start = _starsList[0];
+       else _start = null;
+
+       if (_goalsList.Count != 0) _goal = _goalsList[0];
+       else _goal = null;
     }
 
     //XOff 7.62   YOFF 9.95

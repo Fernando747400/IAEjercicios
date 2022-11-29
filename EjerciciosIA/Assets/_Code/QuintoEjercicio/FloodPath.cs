@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,6 +10,9 @@ public class FloodPath : MonoBehaviour
     private Dictionary<Block, Block> _comeFrom;
     private Map _map;
     //private MapManager _manager;
+
+    private Block _seed;
+    private Block _goal;
 
     void Start()
     {
@@ -22,7 +26,15 @@ public class FloodPath : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Space))
         {
             Debug.Log("Is Pressed");
-            getPath(_map.Start);
+            foreach(Block seed in _map.Seeds)
+            {
+                foreach (Block goal in _map.Goals)
+                {
+                    _seed = seed;
+                    _goal = goal;
+                    getPath(seed);
+                }
+            }
         }
     }
 
@@ -68,15 +80,23 @@ public class FloodPath : MonoBehaviour
     private void printPath()
     {
         Block previous;
-        previous = _comeFrom[_map.Goal];
-        while (previous != _map.Start)
+        previous = _comeFrom[_goal];
+        while (previous != _seed)
         {
             previous.BlockStateType = Block.BlockState.PATH;
             previous = _comeFrom[previous];  
         }    
-        if(previous == _map.Start)
+        if(previous == _seed)
         {
             previous.BlockStateType = Block.BlockState.SEED;
         }
+
+        ClearValues();
+    }
+
+    private void ClearValues()
+    {
+        _frontier.Clear();
+        _comeFrom.Clear();
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MapManager : MonoBehaviour
 {
@@ -6,7 +7,6 @@ public class MapManager : MonoBehaviour
 
     [Header("Dependencies")]
     [SerializeField] private GameObject _prefab;
-    [SerializeField] private FloodPath _floodPath; 
 
     [Header("Map Size")]
     [SerializeField]  private Vector2Int _size;
@@ -59,7 +59,10 @@ public class MapManager : MonoBehaviour
 
     private void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(1);
+        }
     }
     #endregion
 

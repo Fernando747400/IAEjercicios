@@ -5,6 +5,7 @@ public class Block : MonoBehaviour
 {
     public event Action<GameObject> SeedEvent;
     public event Action<GameObject> GoalEvent;
+    public event Action<GameObject> ClearEvent;
     
     private BlockState _blockStateType;
 
@@ -37,8 +38,8 @@ public class Block : MonoBehaviour
     {
         _spriteRenderer.color = MapManager.Instance.MouseOverColor;
         if (Input.GetMouseButtonDown(0)) ChangeStateOnInput(KeyCode.Mouse0);
-        else if (Input.GetMouseButtonDown(1)) ChangeStateOnInput(KeyCode.Mouse1);
-        else if (Input.GetMouseButtonDown(2)) ChangeStateOnInput(KeyCode.Mouse2);
+        else if (Input.GetMouseButtonDown(1)) ChangeStateOnInput(KeyCode.Mouse2); //This should be 2 when Obstacles are working 
+        //else if (Input.GetMouseButtonDown(1)) ChangeStateOnInput(KeyCode.Mouse1);
     }
 
     public void OnMouseExit()
@@ -50,6 +51,7 @@ public class Block : MonoBehaviour
     #region Private Methods
     private void ChangeStateOnInput(KeyCode keyPressed)
     {
+        ClearEvent?.Invoke(this.gameObject);
         switch (keyPressed)
         {
             case KeyCode.Mouse0:
